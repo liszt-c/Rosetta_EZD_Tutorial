@@ -6,7 +6,7 @@
     </SCOREFXNS>
     <TASKOPERATIONS>
     # 定义对对接表面进行设计，后续引用
-        <DetectProteinLigandInterface name="design_interface" cut1="6.0" cut2="8.0" cut3="10.0" cut4="12.0" design="1" resfile="SUR.resfile"/>
+        <DetectProteinLigandInterface name="design_interface" cut1="6.0" cut2="8.0" cut3="10.0" cut4="12.0" design="1" resfile="MOL.resfile"/>
     </TASKOPERATIONS>
     <LIGAND_AREAS>
     # 指定小分子在每一步中设计的范围
