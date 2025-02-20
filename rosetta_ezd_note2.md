@@ -1,8 +1,12 @@
 #### 参考文献，2016 Rosetta and the Design of Ligand Binding Sites
 #### 官方RosettaScripts教学: https://docs.rosettacommons.org/docs/latest/scripting_documentation/RosettaScripts/RosettaScripts  
 #### 官方酶设计教程，主要看参数设置：https://docs.rosettacommons.org/docs/latest/application_documentation/design/enzyme-design  
+#### 其他参考资料：https://zhuanlan.zhihu.com/p/70970820
+
 # 1.1 relax protocol 松弛蛋白结构
 >mpirun --oversubscribe -np 24 $ROSETTA3/bin/relax.static.linuxgccrelease -ignore_unrecognized_res -ignore_zero_occupancy false -use_input_sc -flip_HNQ -no_optH false -relax:constrain_relax_to_start_coords -relax:coord_constrain_sidechains -relax:ramp_constraints false -s MAL.pdb
+
+ps: openmpi提示超过资源使用--oversubscribe来强制运行
 
 生成的是MAL_0001.pdb，重命名为MAL_relax.pdb避免搞混了
 
@@ -16,12 +20,12 @@ http://carbon.structbio.vanderbilt.edu/index.php/bclconf
 # 1.4 从小分子构象生成 params 文件
 >$ROSETTA3/scripts/python/public/molfile_to_params.py --name=MOL --pdb=MOL --conformers-in-one-file MOL_conf.sdf 
 
-其中，-n 指定在 pdb 和 params 文件中用来表示配体名称的 3 字符缩写，这里命名为 LIG 即配体 ligand 的缩写（需要注意的是，这里不能沿用 GLY 或者其他氨基酸、金属原子的缩写，否则生成的 params 文件会在后续突变结构时，与 Rosetta 自带的氨基酸或部分金属原子的 params 文件发生冲突）；-p 指定生成文件的命名。  
+其中，-n / --name 指定在 pdb 和 params 文件中用来表示配体名称的 3 字符缩写，需要注意的是，这里不能沿用 GLY 或者其他氨基酸、金属原子的缩写，否则生成的 params 文件会在后续突变结构时，与 Rosetta 自带的氨基酸或部分金属原子的 params 文件发生冲突；-p / --pdb 指定生成文件的命名。  
 注意名称一致，不然后续会报错
 
 
 # 2.1 定义约束文件(突变点位)
-建立一个文本后缀.resfile，该文件定义https://zhuanlan.zhihu.com/p/70970820 ，
+建立一个文本后缀.resfile，该文件定义参考https://zhuanlan.zhihu.com/p/70970820 ，
 ## 写入
 >NATAA  
 AUTO  
