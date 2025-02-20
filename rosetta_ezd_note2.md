@@ -1,7 +1,8 @@
 #### 参考文献，2016 Rosetta and the Design of Ligand Binding Sites
 #### 官方RosettaScripts教学: https://docs.rosettacommons.org/docs/latest/scripting_documentation/RosettaScripts/RosettaScripts  
 #### 官方酶设计教程，主要看参数设置：https://docs.rosettacommons.org/docs/latest/application_documentation/design/enzyme-design  
-#### 其他参考资料：https://zhuanlan.zhihu.com/p/70970820
+#### 其他参考资料(参考文献翻译版)：https://zhuanlan.zhihu.com/p/70970820
+#### 官网中译版：https://zhuanlan.zhihu.com/p/463076260
 
 # 1.1 relax protocol 松弛蛋白结构
 >mpirun --oversubscribe -np 24 $ROSETTA3/bin/relax.static.linuxgccrelease -ignore_unrecognized_res -ignore_zero_occupancy false -use_input_sc -flip_HNQ -no_optH false -relax:constrain_relax_to_start_coords -relax:coord_constrain_sidechains -relax:ramp_constraints false -s MAL.pdb
