@@ -1,0 +1,10 @@
+center_x =  1.889
+center_y =  5.722
+center_z =  -0.5
+size_x = 50
+size_y = 50
+size_z = 50
+exhaustiveness =300
+num_modes = 10
+energy_range = 4
+seed=2024

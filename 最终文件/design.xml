@@ -1,0 +1,59 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+    # 定义打分函数在后续会引用
+        <ScoreFunction name="ligand_soft_rep" weights="ligand_soft_rep.wts"/>
+        <ScoreFunction name="hard_rep" weights="ligandprime.wts"/>
+    </SCOREFXNS>
+    <TASKOPERATIONS>
+    # 定义对对接表面进行设计，后续引用
+        <DetectProteinLigandInterface name="design_interface" cut1="6.0" cut2="8.0" cut3="10.0" cut4="12.0" design="1" resfile="SUR.resfile"/>
+    </TASKOPERATIONS>
+    <LIGAND_AREAS>
+    # 指定小分子在每一步中设计的范围
+        <LigandArea name="docking_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
+        <LigandArea name="final_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+        <LigandArea name="final_backbone" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
+        # docking_sidechain: 对接时允许配体6Å内侧链移动，配体自身优化10次。
+        # final_backbone: 最终阶段允许骨架移动（Calpha_restraints="0.3"限制幅度）。
+    </LIGAND_AREAS>
+    <INTERFACE_BUILDERS>
+    # 指定基于LigandArea构建蛋白质-配体接口的动态区域
+        <InterfaceBuilder name="side_chain_for_docking" ligand_areas="docking_sidechain"/>
+        <InterfaceBuilder name="side_chain_for_final" ligand_areas="final_sidechain"/>
+        <InterfaceBuilder name="backbone" ligand_areas="final_backbone" extension_window="3"/>
+        # extension_window="3": 骨架移动范围扩展到配体周围±3个残基。
+    </INTERFACE_BUILDERS> 
+    <MOVEMAP_BUILDERS>
+    # 定义movemap,明确哪些自由度（侧链/骨架/配体）在优化中被允许
+        <MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="true"/>
+        <MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
+    </MOVEMAP_BUILDERS>
+    <SCORINGGRIDS ligand_chain="X" width="15">
+    # 预计算能量网格，加速配体采样
+        <ClassicGrid grid_name="vdw" weight="1.0"/>
+    </SCORINGGRIDS>
+    <MOVERS>
+    # 定义具体操作单元（如对接、最小化、设计），可组合成复杂Protocols
+        <FavorNativeResidue name="favor_native" bonus="1.00"/>
+        <Transform name="transform" chain="X" box_size="3.0" move_distance="0.1" angle="5" cycles="500" repeats="1" temperature="5" rmsd="4.0"/>
+        <HighResDocker name="high_res_docker" cycles="6" repack_every_Nth="3" scorefxn="ligand_soft_rep" movemap_builder="docking"/>
+        <PackRotamersMover name="design_interface" scorefxn="hard_rep" task_operations="design_interface"/>
+        <FinalMinimizer name="final" scorefxn="hard_rep" movemap_builder="final"/>
+        <InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
+        <ParsedProtocol name="low_res_dock">
+            <Add mover_name="transform"/>
+        </ParsedProtocol>
+        <ParsedProtocol name="high_res_dock">
+            <Add mover_name="high_res_docker"/>
+            <Add mover_name="final"/>
+        </ParsedProtocol>
+    </MOVERS>
+    <PROTOCOLS>
+    # 定义Mover的执行顺序，按照此整体顺序执行程序
+        <Add mover_name="favor_native"/>
+        <Add mover_name="low_res_dock"/>
+        <Add mover_name="design_interface"/>
+        <Add mover_name="high_res_dock"/>
+        <Add mover_name="add_scores"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

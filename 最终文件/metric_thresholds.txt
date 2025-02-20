@@ -1,0 +1,4 @@
+req total_score value < -1750 # measure of protein stability
+req if_X_fa_rep value < 1.0# measure of ligand clashes
+req ligand_is_touching_X value > 0.5# 1.0 if ligand is in pocket
+output sortmin interface_delta_X# binding energy
